@@ -2,21 +2,15 @@ require("dotenv").config();
 const path = require("node:path");
 const express = require("express");
 const session = require("express-session");
-const { Pool } = require("pg");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const { validateUser } = require("./scripts/form-validator");
 const { validationResult } = require("express-validator");
+const { pool } = require("./db/pool");
 const PORT = process.env.PORT || 3001;
 
-const pool = new Pool({
-  host: "localhost",
-  user: "a",
-  password: "a",
-  database: "clubhouse",
-  port: 5432,
-});
+
 
 const app = express();
 
@@ -50,6 +44,8 @@ app.post("/sign-up", validateUser, async (req, res) => {
       errors: errors.array(),
     });
   }
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  await pool.query("INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4)", [req.body.firstName, req.body.lastName, req.body.email, hashedPassword]);
   return res.send("Signed Up!!");
 });
 
