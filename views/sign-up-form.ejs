@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+  </head>
+  <body>
+    <form action="" method="POST">
+      <label for="firstName">First Name:</label>
+      <input
+        type="text"
+        name="firstName"
+        id="firstName"
+        placeholder="First Name"
+        minlength="2"
+        maxlength="50"
+        required
+      />
+      <label for="lastName">Last Name:</label>
+      <input
+        type="text"
+        name="lastName"
+        id="lastName"
+        placeholder="Last Name"
+        minlength="2"
+        maxlength="50"
+        required
+      />
+      <label for="email">Email Address:</label>
+      <input
+        type="email"
+        name="email"
+        id="email"
+        placeholder="Email Address"
+        required
+      />
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        name="password"
+        id="password"
+        placeholder="Password"
+        minlength="6"
+        maxlength="50"
+        required
+      />
+      <label for="confirmPassword">Confirm Password:</label>
+      <input
+        type="password"
+        name="confirmPassword"
+        id="confirmPassword"
+        placeholder="Confirm Password"
+        minlength="6"
+        maxlength="50"
+        required
+      />
+      <button type="submit">Submit</button>
+    </form>
+    <%- include("./partials/errors.ejs") %>
+    <script></script>
+  </body>
+</html>
