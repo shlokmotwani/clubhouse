@@ -7,9 +7,22 @@
 </head>
 <body>
     <h1><%=title%></h1>
+<<<<<<< Updated upstream
     <h3>Welcome, <%= user %></h3>
     <form action="/logout" method="POST">
         <button type="submit">Log Out</button>
     </form>
 </body>
 </html>
+=======
+    <h3>Welcome, <%= user.first_name %></h3>
+    <a href="/write">Write a message</a>
+    <% if(user.membership === "n") { %>
+    <a href="/become-a-member">Become a member</a>
+    <% } %>
+    <form action="/logout" method="POST">
+        <button type="submit">Log Out</button>
+      </form>
+  </body>
+</html>
+>>>>>>> Stashed changes
