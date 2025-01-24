@@ -7,7 +7,7 @@ const emailErr = "Please enter a valid email address.";
 const passwordFormatErr = `Your password must be a minimum of 6 characters long having lowercase letter, uppercase letter, numerical digit and special character (eg. !@#$%^).`;
 const passwordMismatchErr = "Passwords do not match.";
 
-const validateUser = [
+const validateUserData = [
   body("firstName")
     .trim()
     .notEmpty()
@@ -44,4 +44,4 @@ const validateUser = [
     .withMessage(passwordMismatchErr),
 ];
 
-module.exports = { validateUser };
+module.exports = { validateUserData };
