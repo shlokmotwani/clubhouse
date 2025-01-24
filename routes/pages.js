@@ -39,4 +39,22 @@ pageRouter.post("/write", authenticate, async (req, res, next) => {
   res.render("write", { title: "Write a message!" });
 });
 
+pageRouter.get("/write", authenticate, (req, res) => {
+  res.render("write", { title: "Write a message!" });
+});
+
+pageRouter.post("/write", authenticate, async (req, res, next) => {
+  try {
+    const userID = req.user.id;
+    await pool.query(
+      "INSERT INTO messages(title, content, timestamp, user_id) VALUES ($1, $2, $3, $4)",
+      [req.body.title, req.body.content, new Date(), userID]
+    );
+    return res.redirect("/home");
+  } catch (err) {
+    next(err);
+  }
+  res.render("write", { title: "Write a message!" });
+});
+
 module.exports = { pageRouter };
