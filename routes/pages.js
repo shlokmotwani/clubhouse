@@ -17,8 +17,22 @@ pageRouter.get("/failure", (req, res) =>
   res.render("failure", { title: "Oops!" })
 );
 
-pageRouter.get("/home", authenticate, (req, res) => {
-  res.render("home", { title: "Clubhouse | Home", user: req.user });
+pageRouter.get("/home", authenticate, async (req, res, next) => {
+    let query;
+    if(req.user.membership === "y"){
+        query = "SELECT users.first_name, users.last_name, users.email, messages.title, messages.content, messages.timestamp FROM MESSAGES LEFT JOIN users ON messages.user_id = users.id";
+    }
+    else{
+        query = "SELECT messages.title, messages.content FROM MESSAGES";
+    }
+    try{
+        const {rows} = await pool.query(query);
+        console.log(rows);
+        res.render("home", { title: "Clubhouse | Home", user: req.user, messages: rows });
+    }
+    catch(err){
+        next(err);
+    }
 });
 
 pageRouter.get("/become-a-member", authenticate, (req, res) => {

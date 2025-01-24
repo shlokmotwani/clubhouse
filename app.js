@@ -9,7 +9,7 @@ const CPS = require("connect-pg-simple")(session);
 const { pool } = require("./config/pool");
 const { authRouter } = require("./routes/auth");
 const { pageRouter } = require("./routes/pages");
-const PORT = process.env.PORT || 3008;
+const PORT = process.env.PORT || 3009;
 
 const app = express();
 

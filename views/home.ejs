@@ -11,7 +11,14 @@
     <a href="/write">Write a message</a>
     <% if(user.membership === "n") { %>
     <a href="/become-a-member">Become a member</a>
-    <% } %>
+    <% } %> <% messages.forEach(msg => { %>
+    <ul>
+      <li>
+        <%= (msg.first_name || " ") %> <%= (msg.last_name || " ") %> <%=
+        (msg.title || " ") %> <%=(msg.content || " ") %>
+      </li>
+    </ul>
+    <% }); %>
 
     <form action="/logout" method="POST">
       <button type="submit">Log Out</button>
