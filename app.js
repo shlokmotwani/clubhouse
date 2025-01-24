@@ -34,13 +34,6 @@ app.use(
 );
 app.use(passport.session());
 
-const authenticate = (req, res, next) => {
-  if (!req.user) {
-    return res.redirect("/login");
-  }
-  next();
-};
-
 app.use(authRouter);
 app.use(pageRouter);
 

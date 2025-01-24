@@ -3,6 +3,7 @@ const { validateUserData } = require("../scripts/form-validator");
 const { validationResult } = require("express-validator");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
+const { pool } = require("../config/pool");
 
 const authRouter = Router();
 
@@ -12,7 +13,7 @@ authRouter.get("/sign-up", (req, res) => {
 
 authRouter.get("/login", (req, res) => {
   if (req.user) {
-    res.redirect("/home");
+    return res.redirect("/home");
   }
   res.render("login", { title: "Log In" });
 });
