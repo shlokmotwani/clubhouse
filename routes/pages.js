@@ -17,7 +17,11 @@ pageRouter.get("/failure", (req, res) =>
 );
 
 pageRouter.get("/home", authenticate, (req, res) => {
-  res.render("home", { title: "Clubhouse | Home", user: req.user.first_name });
+  res.render("home", { title: "Clubhouse | Home", user: req.user });
+});
+
+pageRouter.get("/become-a-member", authenticate, (req, res) => {
+  res.render("membership-form", { title: "Become a member!" });
 });
 
 module.exports = { pageRouter };

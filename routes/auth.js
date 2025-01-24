@@ -4,6 +4,7 @@ const { validationResult } = require("express-validator");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
 const { pool } = require("../config/pool");
+const { validateMessage } = require("../scripts/member-validator");
 
 const authRouter = Router();
 
@@ -44,6 +45,18 @@ authRouter.post("/sign-up", validateUserData, async (req, res, next) => {
     res.redirect("/home");
   } catch (err) {
     return next(err);
+  }
+});
+
+authRouter.post("/become-a-member", validateMessage, async (req, res, next) => {
+  console.log(req.user);
+  try {
+    await pool.query(`UPDATE users SET membership = 'y' WHERE email = $1`, [
+      req.user.email,
+    ]);
+    return res.redirect("/home");
+  } catch (err) {
+    next(err);
   }
 });
 

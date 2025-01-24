@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%=title%></title>
-</head>
-<body>
+  </head>
+  <body>
     <h1><%=title%></h1>
-    <h3>Welcome, <%= user %></h3>
+    <h3>Welcome, <%= user.first_name %></h3>
     <form action="/logout" method="POST">
-        <button type="submit">Log Out</button>
+      <button type="submit">Log Out</button>
     </form>
-</body>
+    <% if(user.membership === "n") { %>
+    <a href="/become-a-member">Become a member</a>
+    <% } %>
+  </body>
 </html>
