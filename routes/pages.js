@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { pool } = require("../config/pool");
+const { queries } = require("../scripts/queries");
 const pageRouter = Router();
 
 const authenticate = (req, res, next) => {
@@ -18,26 +19,28 @@ pageRouter.get("/failure", (req, res) =>
 );
 
 pageRouter.get("/home", authenticate, async (req, res, next) => {
-    let query;
-    if(req.user.membership === "y"){
-        query = "SELECT users.first_name, users.last_name, users.email, messages.id, messages.title, messages.content, messages.timestamp FROM MESSAGES LEFT JOIN users ON messages.user_id = users.id";
+  let data;
+  try {
+    if (req.user.membership === "y") {
+      const { rows } = await queries.displayMessagesToMembers();
+      data = rows;
+    } else {
+      const { rows } = await queries.displayMessagesToUsers();
+      data = rows;
     }
-    else{
-        query = "SELECT messages.title, messages.content FROM MESSAGES";
-    }
-    try{
-        const {rows} = await pool.query(query);
-        console.log(rows);
-        res.render("home", { title: "Clubhouse | Home", user: req.user, messages: rows });
-    }
-    catch(err){
-        next(err);
-    }
+    res.render("home", {
+      title: "Clubhouse | Home",
+      user: req.user,
+      messages: data,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 pageRouter.get("/become-a-member", authenticate, (req, res) => {
-    res.render("membership-form", { title: "Become a member!" });
-  });
+  res.render("membership-form", { title: "Become a member!" });
+});
 
 pageRouter.get("/write", authenticate, (req, res) => {
   res.render("write", { title: "Write a message!" });
@@ -46,10 +49,13 @@ pageRouter.get("/write", authenticate, (req, res) => {
 pageRouter.post("/write", authenticate, async (req, res, next) => {
   try {
     const userID = req.user.id;
-    await pool.query(
-      "INSERT INTO messages(title, content, timestamp, user_id) VALUES ($1, $2, $3, $4)",
-      [req.body.title, req.body.content, new Date(), userID]
-    );
+    const params = {
+      title: req.body.title,
+      content: req.body.content,
+      timestamp: new Date(),
+      userID,
+    };
+    await queries.addMessage(params);
     return res.redirect("/home");
   } catch (err) {
     next(err);

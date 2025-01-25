@@ -5,6 +5,7 @@ const passport = require("passport");
 const bcrypt = require("bcryptjs");
 const { pool } = require("../config/pool");
 const { validateMessage } = require("../scripts/member-validator");
+const { queries } = require("../scripts/queries");
 
 const authRouter = Router();
 
@@ -42,22 +43,23 @@ authRouter.post("/sign-up", validateUserData, async (req, res, next) => {
       req.body.secretMessageForAdmins &&
       req.body.secretMessageForAdmins === process.env.SECRET_ADMIN_MESSAGE
     ) {
-      await pool.query(
-        "INSERT INTO users (first_name, last_name, email, password, membership, isadmin) VALUES ($1, $2, $3, $4, $5, $6)",
-        [
-          req.body.firstName,
-          req.body.lastName,
-          req.body.email,
-          hashedPassword,
-          "y",
-          "y",
-        ]
-      );
+      const params = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        hashedPassword,
+        membership: "y",
+        isadmin: "y",
+      };
+      queries.addAdmin(params);
     } else {
-      await pool.query(
-        "INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4)",
-        [req.body.firstName, req.body.lastName, req.body.email, hashedPassword]
-      );
+      const params = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        hashedPassword,
+      };
+      queries.addUser(params);
     }
     res.redirect("/home");
   } catch (err) {
@@ -67,9 +69,10 @@ authRouter.post("/sign-up", validateUserData, async (req, res, next) => {
 
 authRouter.post("/become-a-member", validateMessage, async (req, res, next) => {
   try {
-    await pool.query(`UPDATE users SET membership = 'y' WHERE email = $1`, [
-      req.user.email,
-    ]);
+    const params = {
+      email: req.user.email,
+    }
+   queries.updateMembership(params);
     return res.redirect("/home");
   } catch (err) {
     next(err);
@@ -78,11 +81,13 @@ authRouter.post("/become-a-member", validateMessage, async (req, res, next) => {
 
 authRouter.post("/delete-message", async (req, res, next) => {
   console.log(req.body.messageID);
-  try{
-    await pool.query("DELETE FROM messages WHERE id = $1", [String(req.body.messageID)]);
+  try {
+    const params = {
+      messageID: req.body.messageID,
+    }
+    queries.deleteMessage(params);
     res.redirect("/home");
-  }
-  catch(err){
+  } catch (err) {
     next(err);
   }
 });
