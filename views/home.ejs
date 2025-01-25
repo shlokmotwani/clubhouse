@@ -23,16 +23,13 @@
           type="text"
           id="messageID"
           name="messageID"
-          value="<%"
-          ="msg.id"
-          %
-        />
+          value=<%=msg.id%>
         hidden>
         <button type="submit">Delete</button>
       </form>
       <% } %>
     </ul>
-    <% }); %>
+    <% })%>
 
     <form action="/logout" method="POST">
       <button type="submit">Log Out</button>
