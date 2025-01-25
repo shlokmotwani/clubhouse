@@ -20,7 +20,7 @@ pageRouter.get("/failure", (req, res) =>
 pageRouter.get("/home", authenticate, async (req, res, next) => {
     let query;
     if(req.user.membership === "y"){
-        query = "SELECT users.first_name, users.last_name, users.email, messages.title, messages.content, messages.timestamp FROM MESSAGES LEFT JOIN users ON messages.user_id = users.id";
+        query = "SELECT users.first_name, users.last_name, users.email, messages.id, messages.title, messages.content, messages.timestamp FROM MESSAGES LEFT JOIN users ON messages.user_id = users.id";
     }
     else{
         query = "SELECT messages.title, messages.content FROM MESSAGES";

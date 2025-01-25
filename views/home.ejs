@@ -17,6 +17,20 @@
         <%= (msg.first_name || " ") %> <%= (msg.last_name || " ") %> <%=
         (msg.title || " ") %> <%=(msg.content || " ") %>
       </li>
+      <% if(user.isadmin === "y") { %>
+      <form action="/delete-message" method="POST">
+        <input
+          type="text"
+          id="messageID"
+          name="messageID"
+          value="<%"
+          ="msg.id"
+          %
+        />
+        hidden>
+        <button type="submit">Delete</button>
+      </form>
+      <% } %>
     </ul>
     <% }); %>
 

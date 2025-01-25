@@ -38,10 +38,27 @@ authRouter.post("/sign-up", validateUserData, async (req, res, next) => {
   }
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    await pool.query(
-      "INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4)",
-      [req.body.firstName, req.body.lastName, req.body.email, hashedPassword]
-    );
+    if (
+      req.body.secretMessageForAdmins &&
+      req.body.secretMessageForAdmins === process.env.SECRET_ADMIN_MESSAGE
+    ) {
+      await pool.query(
+        "INSERT INTO users (first_name, last_name, email, password, membership, isadmin) VALUES ($1, $2, $3, $4, $5, $6)",
+        [
+          req.body.firstName,
+          req.body.lastName,
+          req.body.email,
+          hashedPassword,
+          "y",
+          "y",
+        ]
+      );
+    } else {
+      await pool.query(
+        "INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4)",
+        [req.body.firstName, req.body.lastName, req.body.email, hashedPassword]
+      );
+    }
     res.redirect("/home");
   } catch (err) {
     return next(err);
@@ -49,15 +66,26 @@ authRouter.post("/sign-up", validateUserData, async (req, res, next) => {
 });
 
 authRouter.post("/become-a-member", validateMessage, async (req, res, next) => {
-    try {
-      await pool.query(`UPDATE users SET membership = 'y' WHERE email = $1`, [
-        req.user.email,
-      ]);
-      return res.redirect("/home");
-    } catch (err) {
-      next(err);
-    }
-  });
+  try {
+    await pool.query(`UPDATE users SET membership = 'y' WHERE email = $1`, [
+      req.user.email,
+    ]);
+    return res.redirect("/home");
+  } catch (err) {
+    next(err);
+  }
+});
+
+authRouter.post("/delete-message", async (req, res, next) => {
+  console.log(req.body.messageID);
+  try{
+    await pool.query("DELETE FROM messages WHERE id = $1", [String(req.body.messageID)]);
+    res.redirect("/home");
+  }
+  catch(err){
+    next(err);
+  }
+});
 
 authRouter.post(
   "/login",
